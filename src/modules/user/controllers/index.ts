@@ -15,7 +15,7 @@ const setRefreshTokenCookie = (res: Response, token: string): void => {
 };
 
 // -------------------- Controllers --------------------
-export const signin = async (req: Request, res: Response, next: NextFunction) => {
+export const signup = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { firstname, lastname, email, password } = req.body as SignupRequest;
 
@@ -70,7 +70,7 @@ export const login = async (req: Request, res: Response, next: NextFunction) => 
 export const logout = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const refreshToken = req.cookies?.jwt;
-    if (!refreshToken) return res.sendStatus(204);
+    if (!refreshToken) return next(new AppError("", 204));
 
     const user = await findUserByRefreshToken(refreshToken);
     if (user && user.refreshToken) {
