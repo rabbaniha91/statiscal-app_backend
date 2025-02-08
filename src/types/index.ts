@@ -5,8 +5,8 @@ export interface User {
   lastname: string;
   email: string;
   password: string;
-  refreshToken: string[];
-  role: "admin" | "user";
+  refreshToken?: string[];
+  role?: "admin" | "user";
   statistcs?: Types.ObjectId[];
 }
 
