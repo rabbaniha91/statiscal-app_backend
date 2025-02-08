@@ -1,7 +1,7 @@
 import mongoose, { Types } from "mongoose";
-import { User } from "../../../types";
+import { User, UserDocument } from "../../../types";
 
-const userSchema = new mongoose.Schema<User>(
+const userSchema = new mongoose.Schema<UserDocument>(
   {
     firstname: { type: String },
     lastname: { type: String },
@@ -14,6 +14,6 @@ const userSchema = new mongoose.Schema<User>(
   { timestamps: true }
 );
 
-const UserModel = mongoose.model<User>("UserModel", userSchema);
+const UserModel = mongoose.model<UserDocument>("UserModel", userSchema);
 
 export default UserModel;

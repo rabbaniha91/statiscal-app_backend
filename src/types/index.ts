@@ -1,4 +1,4 @@
-import { ObjectId } from "mongoose";
+import { Document, ObjectId, Types } from "mongoose";
 
 export interface User {
   firstname: string;
@@ -7,5 +7,7 @@ export interface User {
   password: string;
   refreshToken: string[];
   role: "admin" | "user";
-  statistcs?: ObjectId[];
+  statistcs?: Types.ObjectId[];
 }
+
+export interface UserDocument extends User, Document {}
