@@ -25,3 +25,8 @@ export const validateCredentials = async (email: string, password: string): Prom
 
   return user;
 };
+
+export const findUserByRefreshToken = async (refreshToken: string): Promise<UserDocument | null> => {
+  const user = await UserModel.findOne({ refreshToken });
+  return user;
+};

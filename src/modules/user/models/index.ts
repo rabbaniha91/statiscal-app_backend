@@ -9,7 +9,7 @@ const userSchema = new mongoose.Schema<UserDocument>(
     password: { type: String },
     refreshToken: [String],
     role: { type: String, enum: ["user", "admin"], default: "user" },
-    statistcs: [{ type: Types.ObjectId, ref: "Statistic" }],
+    statistcs: [{ type: Types.ObjectId, ref: "Statistic", default: [] }],
   },
   { timestamps: true }
 );
