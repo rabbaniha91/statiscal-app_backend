@@ -1,7 +1,5 @@
 import { NextFunction, Request, Response } from "express";
 import { validationResult } from "express-validator";
-import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
 import AppError from "../../error/services/AppError";
 import { User } from "../../../types";
 import UserModel from "../models";
