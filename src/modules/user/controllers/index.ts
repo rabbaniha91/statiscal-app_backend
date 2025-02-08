@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import AppError from "../../../modules/error/services/AppError";
 import { createToken, verifyToken } from "../../../services/tokenServisec";
 import { checkDuplicateEmail, createUser, findUserByRefreshToken, validateCredentials } from "../services/userServices";
-import { User } from "../../../types";
+import { LoginRequest, SignupRequest, User } from "../../../types";
 
 // -------------------- Helper Functions --------------------
 const setRefreshTokenCookie = (res: Response, token: string): void => {
@@ -17,7 +17,7 @@ const setRefreshTokenCookie = (res: Response, token: string): void => {
 // -------------------- Controllers --------------------
 export const signin = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const { firstname, lastname, email, password } = req.body as User;
+    const { firstname, lastname, email, password } = req.body as SignupRequest;
 
     await checkDuplicateEmail(email, next);
     const user = await createUser({ firstname, lastname, email, password });
@@ -43,7 +43,7 @@ export const signin = async (req: Request, res: Response, next: NextFunction) =>
 
 export const login = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const { email, password } = req.body;
+    const { email, password } = req.body as LoginRequest;
     const refreshToken = req.cookies?.jwt;
 
     const user = await validateCredentials(email, password);
