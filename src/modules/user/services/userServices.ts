@@ -16,14 +16,15 @@ export const createUser = async (userData: User): Promise<UserDocument> => {
   return await UserModel.create({ ...userData, password: hashedPassword });
 };
 
-export const validateCredentials = async (email: string, password: string): Promise<UserDocument> => {
+export const validateCredentials = async (email: string, password: string, next: NextFunction): Promise<UserDocument | null | void> => {
   const user = await UserModel.findOne({ email });
-  if (!user) throw new AppError("No user has registered with this email address.", 400);
-
-  const isValid = await isMatchPassword(password, user.password);
-  if (!isValid) throw new AppError("The password is incorrect.", 401);
-
-  return user;
+  if (!user) {
+    return next(new AppError("No user has registered with this email address.", 400));
+  } else {
+    const isValid = await isMatchPassword(password, user.password);
+    if (!isValid) return next(new AppError("The password is incorrect.", 401));
+    return user;
+  }
 };
 
 export const findUserByRefreshToken = async (refreshToken: string): Promise<UserDocument | null> => {

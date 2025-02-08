@@ -46,22 +46,24 @@ export const login = async (req: Request, res: Response, next: NextFunction) => 
     const { email, password } = req.body as LoginRequest;
     const refreshToken = req.cookies?.jwt;
 
-    const user = await validateCredentials(email, password);
-    if (user?.refreshToken) user.refreshToken = user?.refreshToken.filter((rt) => rt !== refreshToken);
+    const user = await validateCredentials(email, password, next);
+    if (user) {
+      if (user?.refreshToken) user.refreshToken = user?.refreshToken.filter((rt) => rt !== refreshToken);
 
-    const newRefreshToken = createToken({ userId: user.id }, process.env.JWT_SECRET_REFRESH!, "15d");
-    const accessToken = createToken({ userId: user.id }, process.env.JWT_SECRET_ACCESS!, "1h");
-    if (user?.refreshToken) user.refreshToken.push(newRefreshToken);
-    await user.save();
+      const newRefreshToken = createToken({ userId: user.id }, process.env.JWT_SECRET_REFRESH!, "15d");
+      const accessToken = createToken({ userId: user.id }, process.env.JWT_SECRET_ACCESS!, "1h");
+      if (user?.refreshToken) user.refreshToken.push(newRefreshToken);
+      await user.save();
 
-    res.clearCookie("jwt", { httpOnly: true, sameSite: "none", secure: true });
-    setRefreshTokenCookie(res, newRefreshToken);
+      res.clearCookie("jwt", { httpOnly: true, sameSite: "none", secure: true });
+      setRefreshTokenCookie(res, newRefreshToken);
 
-    res.status(200).json({
-      user: { firstname: user.firstname, lastname: user.lastname, email, role: user.role },
-      accessToken,
-      message: "User logged in",
-    });
+      res.status(200).json({
+        user: { firstname: user.firstname, lastname: user.lastname, email, role: user.role },
+        accessToken,
+        message: "User logged in",
+      });
+    }
   } catch (error: unknown) {
     next(error instanceof AppError ? error : new AppError("Internal Server Error", 500));
   }
