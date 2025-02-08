@@ -16,6 +16,10 @@ export const createUser = async (userData: User): Promise<UserDocument> => {
   return await UserModel.create({ ...userData, password: hashedPassword });
 };
 
+export const findUserById = async (userId: string): Promise<UserDocument | null> => {
+  return await UserModel.findById(userId);
+};
+
 export const validateCredentials = async (email: string, password: string, next: NextFunction): Promise<UserDocument | null | void> => {
   const user = await UserModel.findOne({ email });
   if (!user) {
