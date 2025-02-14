@@ -3,8 +3,7 @@ import { User, UserDocument } from "../../../types";
 
 const userSchema = new mongoose.Schema<UserDocument>(
   {
-    firstname: { type: String },
-    lastname: { type: String },
+    username: { type: String, unique: true },
     email: { type: String, unique: true },
     password: { type: String },
     refreshToken: [String],

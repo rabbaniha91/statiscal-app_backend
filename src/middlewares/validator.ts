@@ -2,20 +2,15 @@ import { body } from "express-validator";
 
 export const signinValidate = () => {
   return [
-    body("firstname")
+    body("username")
       .notEmpty()
-      .withMessage("Please enter your first name")
+      .withMessage("Please enter your username")
       .isLength({ min: 3 })
-      .withMessage("The first name should not be less than 3 letters.")
+      .withMessage("The username should not be less than 3 letters.")
       .isLength({ max: 50 })
-      .withMessage("First name should not exceed 50 characters."),
-    body("lastname")
-      .notEmpty()
-      .withMessage("Please enter your last name")
-      .isLength({ min: 3 })
-      .withMessage("The last name should not be less than 3 letters.")
-      .isLength({ max: 50 })
-      .withMessage("Last name should not exceed 50 characters."),
+      .withMessage("Username should not exceed 50 characters.")
+      .matches(/[a-zA-Z0-9]+/)
+      .withMessage("Usernames can only contain uppercase and lowercase English letters and numbers."),
     body("email").notEmpty().withMessage("Please enter your email").isEmail().withMessage("The email format is not correct."),
     body("password")
       .notEmpty()

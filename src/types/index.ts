@@ -1,8 +1,7 @@
 import { Document, ObjectId, Types } from "mongoose";
 
 export interface User {
-  firstname: string;
-  lastname: string;
+  username: string;
   email: string;
   password: string;
   refreshToken?: string[];
@@ -13,8 +12,7 @@ export interface User {
 export interface UserDocument extends User, Document {}
 
 export interface SignupRequest {
-  firstname: string;
-  lastname: string;
+  username: string;
   email: string;
   password: string;
 }

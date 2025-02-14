@@ -18,10 +18,10 @@ const setRefreshTokenCookie = (res: Response, token: string): void => {
 // -------------------- Controllers --------------------
 export const signup = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const { firstname, lastname, email, password } = req.body as SignupRequest;
+    const { username, email, password } = req.body as SignupRequest;
 
     await checkDuplicateEmail(email, next);
-    const user = await createUser({ firstname, lastname, email, password });
+    const user = await createUser({ username, email, password });
 
     const accessToken = createToken({ userId: user.id }, envs.JWT_SECRET_ACCESS, "1h");
     const refreshToken = createToken({ userId: user.id }, envs.JWT_SECRET_REFRESH, "15d");
@@ -33,7 +33,7 @@ export const signup = async (req: Request, res: Response, next: NextFunction) =>
     setRefreshTokenCookie(res, refreshToken);
 
     res.status(201).json({
-      user: { firstname, lastname, email, role: user.role },
+      user: { username, email, role: user.role },
       accessToken,
       message: "User registered",
     });
@@ -60,7 +60,7 @@ export const login = async (req: Request, res: Response, next: NextFunction) => 
       setRefreshTokenCookie(res, newRefreshToken);
 
       res.status(200).json({
-        user: { firstname: user.firstname, lastname: user.lastname, email, role: user.role },
+        user: { username: user.username, email, role: user.role },
         accessToken,
         message: "User logged in",
       });
