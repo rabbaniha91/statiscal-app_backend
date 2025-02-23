@@ -1,9 +1,9 @@
 import { Router } from "express";
 import { uploadMiddleware, processDataMiddleware } from "../../../middlewares/processData.js";
-import { calcBasic } from "../controllers/basicStatiscal.js";
+import { calc } from "../controllers/descriptiveAnalysis.js";
 
 const router = Router();
 
-router.post("/calc-basic", uploadMiddleware, processDataMiddleware, calcBasic);
+router.post("/descriptive-analysis", uploadMiddleware, processDataMiddleware, calc);
 
 export default router;

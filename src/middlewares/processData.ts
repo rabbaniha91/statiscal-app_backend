@@ -10,14 +10,17 @@ const upload = multer({ dest: "uploads/" }); // ذخیره فایل‌های آ�
 
 // Middleware پردازش داده‌های ورودی
 const processDataMiddleware = async (req: Request, res: Response, next: NextFunction) => {
+  console.log("Req body: ", req.body);
+  console.log("Req files: ", req.file);
   try {
-    if (req.body.data) {
-      // ورودی دستی (JSON یا آرایه)
-      req.processedData = new Float64Array(req.body.data);
+    if (JSON.parse(req.body.data).length > 0) {
+      console.log("data");
+      req.processedData = new Float64Array(JSON.parse(req.body.data));
       return next();
     }
 
     if (req.file) {
+      console.log("file");
       const filePath = path.join("uploads", req.file.filename);
       const ext = path.extname(req.file.originalname).toLowerCase();
       if (ext === ".csv") {
@@ -27,10 +30,10 @@ const processDataMiddleware = async (req: Request, res: Response, next: NextFunc
           .pipe(csvParser())
           .on("data", (row) => {
             results.push(Object.values(row).map(Number)[0]);
-          }) // تبدیل مقادیر به عدد
+          })
           .on("end", () => {
             req.processedData = new Float64Array(results);
-            // fs.unlinkSync(filePath); // حذف فایل پس از پردازش
+            fs.unlinkSync(filePath); // حذف فایل پس از پردازش
             next();
           });
       } else if (ext === ".xls" || ext === ".xlsx") {
@@ -46,14 +49,12 @@ const processDataMiddleware = async (req: Request, res: Response, next: NextFunc
         });
 
         req.processedData = new Float64Array(data);
-        fs.unlinkSync(filePath); // حذف فایل پس از پردازش
+        fs.unlinkSync(filePath);
         next();
       } else {
-        // return res.status(400).json({ error: "فرمت فایل نامعتبر است" });
         return next(new AppError("فرمت فایل نامعتبر است", 400));
       }
     } else {
-      //   return res.status(400).json({ error: "داده‌ای ارسال نشده است" });
       return next(new AppError("داده‌ای ارسال نشده است", 400));
     }
   } catch (error: any) {
