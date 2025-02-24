@@ -20,7 +20,7 @@ const numPoints = 201;
 
 async function initializeWasmModule() {
   try {
-    const wasmModulePath = path.resolve(__dirname, "../../../../wasm/wasm/descriptiveAnalysis.mjs");
+    const wasmModulePath = path.resolve(__dirname, "../services/wasm/descriptiveAnalysis.mjs");
     const EmscriptenModule = await import("file://" + wasmModulePath);
     wasmModule = await EmscriptenModule.default();
 
@@ -89,22 +89,22 @@ export const calc = async (req: Request, res: Response, next: NextFunction) => {
         const quartiles = getFloat64Array(wasmModule, quartilesPtr, 3);
 
         // منحنی چگال داده ها
-        const generateNormalPDFPtr = wasmModule._malloc(numPoints * 8);
-        wasmModule.ccall(
-          "generateNormalPDF",
-          null,
-          ["number", "number", "number", "number"],
-          [dataPtr, generateNormalPDFPtr, data.length, numPoints]
-        );
-        const normalizedPDFData = getFloat64Array(wasmModule, generateNormalPDFPtr, data.length);
-        console.log("NormalData: ", normalizedPDFData);
-        const lower = meanOfData - 4 * stdDev;
-        const upper = meanOfData + 4 * stdDev;
-        const step = (upper - lower) / (numPoints - 1);
-        const generateNormalPDF = Array.from({ length: numPoints }, (_, i) => {
-          const x = lower + i * step;
-          return { x: Number(x.toFixed(3)), value: normalizedPDFData[i] };
-        });
+        // const generateNormalPDFPtr = wasmModule._malloc(numPoints * 8);
+        // wasmModule.ccall(
+        //   "generateNormalPDF",
+        //   null,
+        //   ["number", "number", "number", "number"],
+        //   [dataPtr, generateNormalPDFPtr, data.length, numPoints]
+        // );
+        // const normalizedPDFData = getFloat64Array(wasmModule, generateNormalPDFPtr, data.length);
+        // console.log("NormalData: ", normalizedPDFData);
+        // const lower = meanOfData - 4 * stdDev;
+        // const upper = meanOfData + 4 * stdDev;
+        // const step = (upper - lower) / (numPoints - 1);
+        // const generateNormalPDF = Array.from({ length: numPoints }, (_, i) => {
+        //   const x = lower + i * step;
+        //   return { x: Number(x.toFixed(3)), value: normalizedPDFData[i] };
+        // });
 
         // منحنی توزیع نرمال
         const xPtr = wasmModule._malloc(numPoints * 8);
@@ -175,7 +175,7 @@ export const calc = async (req: Request, res: Response, next: NextFunction) => {
 
         wasmModule._free(dataPtr);
         wasmModule._free(quartilesPtr);
-        wasmModule._free(generateNormalPDFPtr);
+        // wasmModule._free(generateNormalPDFPtr);
 
         const basicAnalyze = {
           mean: meanOfData,
@@ -199,7 +199,7 @@ export const calc = async (req: Request, res: Response, next: NextFunction) => {
             basicAnalyze,
             rowData: data,
             normalData,
-            density: generateNormalPDF,
+            // density: generateNormalPDF,
             frequency,
             dataType,
           },
